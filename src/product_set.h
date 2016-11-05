@@ -32,10 +32,10 @@ typedef MIDX::multi_index_container <
     MIDX::indexed_by <
         // sort by Product::operator <      get<0>
         MIDX::ordered_unique< MIDX::identity<Product> >,
-        // sort name     get<1>
-        MIDX::ordered_non_unique< MIDX::const_mem_fun<Product, const std::string&, &Product::name> >,
-        // sort on type       get<2>
+        // sort by type     get<1>
         MIDX::ordered_non_unique< MIDX::const_mem_fun<Product, const std::string&, &Product::type> >,
+        // sort by name       get<2>
+        MIDX::ordered_non_unique< MIDX::const_mem_fun<Product, const std::string&, &Product::name> >,
         // sort on price       get<3>
         MIDX::ordered_non_unique< MIDX::const_mem_fun<Product, float, &Product::price> >
     > 

@@ -8,25 +8,48 @@
 #include "common.hpp"
 #include "trie.hpp"
 #include "product_set.h"
+#include "product_trie.h"
 
 DEFINE_string(data, "", "data file name.");
 
 
 // global vars
 static ProductSet       g_ProductSet;
+static ProductTrie      g_ProductTrie;
 
 
 namespace Test {
 using namespace std;
 
+void test_query_by_type()
+{
+    auto& idx = g_ProductSet.get<1>();
+    auto i0 = idx.lower_bound("Spices");
+    auto i1 = idx.upper_bound("Spices");
+    for (; i0 != i1; ++i0)
+        cout << **i0 << endl;
+}
+
+void test_query_by_price()
+{
+    auto& idx = g_ProductSet.get<3>();
+    auto beg = idx.lower_bound(15);
+    auto end = idx.lower_bound(20);
+    for (; beg != end; ++beg)
+        cout << **beg << endl;
+}
+
+void test_trie()
+{
+    g_ProductTrie.traverse(cout);
+    cout << endl;
+}
+
 void test()
 {
-    ifstream ifs("data/PRODUCT_MST.csv");
-    string line;
-    getline(ifs, line);
-    getline(ifs, line);
-    auto p = std::make_shared<Product>(line);
-    cout << *p << endl;
+    auto& idx = g_ProductSet.get<2>();
+    for (auto it = idx.begin(); it != idx.end(); ++it)
+        cout << (*it)->name() << endl;
 }
 
 } // namespace Test
@@ -49,9 +72,13 @@ void load_data(const std::string &fname)
     while (getline(ifs, line)) {
         auto pProduct = std::make_shared<Product>(line);
         g_ProductSet.emplace(pProduct);
+        g_ProductTrie.addProduct(pProduct);
+        // g_ProductTrie.traverse(cout);
+        // getchar();
+        // cout << *pProduct << endl;
     } // while
 
-    DLOG(INFO) << g_ProductSet.size();
+    // DLOG(INFO) << g_ProductSet.size();
 }
 
 
@@ -62,10 +89,14 @@ try {
     google::InitGoogleLogging(argv[0]);
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-    // Test::test();
     load_data(FLAGS_data);
 
-    LOG(INFO) << argv[0] << " done!";
+    // Test::test_query_by_type();
+    // Test::test_query_by_price();
+    // Test::test();
+    Test::test_trie();
+
+    // LOG(INFO) << argv[0] << " done!";
     return 0;    
 
 } catch (const std::exception &ex) {

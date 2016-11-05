@@ -17,12 +17,12 @@ public:
     friend std::ostream& operator << (std::ostream &os, const Product &p)
     {
         os << "id:" << p.id() << " name:\"" << p.name() << "\""
-            << " type:" << p.type() << " price:" << p.price();
+            << " type:\"" << p.type() << "\" price:" << p.price();
         return os;
     }
 
     Product() : m_nID(0), m_fPrice(0.0) {};
-    Product(const std::string &csv);
+    Product(const std::string &record);
 
     IdType id() const { return m_nID; }
     const std::string& type() const { return m_strType; }

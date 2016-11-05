@@ -137,17 +137,13 @@ public:
     typename Node::pointer root()
     { return m_pRoot; }
 
-    ElemSet& elemSet()
-    { return m_setElems; }
-
     template<typename Iter>
     typename Node::pointer addPath( Iter beg, Iter end )
     {
         typename Node::pointer curNode = m_pRoot;
 
         for (; beg != end; ++beg) {
-            auto ret = m_setElems.insert( std::make_shared<T>(*beg) );
-            auto pData = *(ret.first);
+            auto pData = std::make_shared<T>(*beg);
             auto newNode = std::make_shared<Node>(pData);
             auto acRet = curNode->addChild(newNode);
             curNode = acRet.first;
@@ -160,7 +156,7 @@ public:
     addPath( const std::vector<T> &vec )
     { return addPath(vec.begin(), vec.end()); }
 
-    std::pair<typename Node::pointer, bool>
+    std::pair<typename Node::pointer, bool> // 返回新插入的节点或已经存在的节点
     addNode(const typename Node::pointer &parent, 
             const typename Node::pointer &newNode)
     {
@@ -170,10 +166,17 @@ public:
 
     std::pair<typename Node::pointer, bool>
     addNode(const typename Node::pointer &parent, 
+            const elem_pointer& pElem)
+    {
+        auto newNode = std::make_shared<Node>(pElem);
+        return addNode(parent, newNode);
+    }
+
+    std::pair<typename Node::pointer, bool>
+    addNode(const typename Node::pointer &parent, 
             const T& data)
     {
-        auto ret = m_setElems.insert( std::make_shared<T>(data) );
-        auto pData = *(ret.first);
+        auto pData = std::make_shared<T>(data);
         auto newNode = std::make_shared<Node>(pData);
         return addNode(parent, newNode);
     }
@@ -216,20 +219,8 @@ public:
     std::size_t countNodes()
     { return root()->countNodes()-1; }
 
-    void syncElems()
-    {
-        auto it = m_setElems.begin();
-        for (; it != m_setElems.end();) {
-            if (it->use_count() == 1)
-                m_setElems.erase(it++);
-            else
-                ++it;
-        } // for
-    }
-
 protected:
     typename Node::pointer    m_pRoot;
-    ElemSet                   m_setElems; // check when remove node
 };
 
 
