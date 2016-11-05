@@ -12,7 +12,7 @@ Product::Product(const std::string &csv) : Product()
 {
     using namespace std;
 
-    // DLOG(INFO) << "Product constructor csv = " << csv;
+    DLOG(INFO) << "Product constructor csv = " << csv;
 
     char *pCsv = const_cast<char*>(csv.c_str());
     char *saveEnd1 = NULL;
