@@ -27,12 +27,6 @@ struct ProductElem {
 
 class ProductTrie : public Trie<ProductElem> {
 public:
-    // struct NodeCmpByProductId {
-        // bool operator()(const Node::pointer &lhs, const Node::pointer &rhs) const
-        // { return lhs->data().pProduct->id() < rhs->data().pProduct->id(); }
-    // };
-
-public:
     std::pair<typename Node::pointer, bool>
     addProduct(const Product::pointer &p);
     Node::pointer getNodeById(Product::IdType id);

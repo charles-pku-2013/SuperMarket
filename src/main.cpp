@@ -105,10 +105,7 @@ void handle_query_id(Product::IdType id1, Product::IdType id2)
     auto i0 = g_ProductSet.lower_bound(id1, ProductCmpById());
     auto i1 = g_ProductSet.upper_bound(id2, ProductCmpById());
 
-    if (i0 == i1) {
-        cout << "No item found!" << endl;
-        return;
-    } // if
+    COND_RET_MSG(i0 == i1, "No item found!");
 
     for (; i0 != i1 && i0 != g_ProductSet.end(); ++i0)
         cout << **i0 << endl;
@@ -138,10 +135,7 @@ void handle_query_name(const std::string &s1, const std::string &s2)
     auto i0 = idx.lower_bound(s1, CmpStringPartial());
     auto i1 = idx.upper_bound(s2, CmpStringPartial());
 
-    if (i0 == i1) {
-        cout << "No item found!" << endl;
-        return;
-    } // if
+    COND_RET_MSG(i0 == i1, "No item found!");
 
     for (; i0 != i1 && i0 != idx.end(); ++i0)
         cout << **i0 << endl;
@@ -159,10 +153,7 @@ void handle_query_price(float v1, float v2)
     auto i0 = idx.lower_bound(v1);
     auto i1 = idx.upper_bound(v2);
 
-    if (i0 == i1) {
-        cout << "No item found!" << endl;
-        return;
-    } // if
+    COND_RET_MSG(i0 == i1, "No item found!");
 
     for (; i0 != i1 && i0 != idx.end(); ++i0)
         cout << **i0 << endl;
@@ -177,10 +168,7 @@ void handle_query(std::stringstream &ss)
     string item, arg1, arg2;
 
     ss >> item >> arg1;
-    if (ss.fail() || ss.bad()) {
-        cout << "Invalid command!" << endl;
-        return;
-    } // if ss
+    COND_RET_MSG(ss.fail() || ss.bad(), "Invalid command!");
 
     ss >> arg2;
     if (arg2.empty())
@@ -215,7 +203,30 @@ void handle_query(std::stringstream &ss)
 static
 void handle_similar(std::stringstream &ss)
 {
-    
+    using namespace std;
+
+    Product::IdType id1 = 0, id2 = 0;
+
+    ss >> id1 >> id2;
+    COND_RET_MSG(ss.fail() || ss.bad(), "Invalid command!");
+    COND_RET_MSG(id1 == id2, "Querying identical item!");
+
+    auto pNode1 = g_ProductTrie.getNodeById(id1);
+    COND_RET_MSG(!pNode1, "No item found with id " << id1);
+    auto pNode2 = g_ProductTrie.getNodeById(id2);
+    COND_RET_MSG(!pNode2, "No item found with id " << id2);
+
+    auto pComm = g_ProductTrie.commonRoot(pNode1, pNode2);
+    COND_RET_MSG(!pComm, "No common info between item " << id1 << " and " << id2);
+
+    std::deque<ProductTrie::elem_pointer>   path;
+    pComm->getPath(path);
+    COND_RET_MSG(path.empty(), "No common info between item " << id1 << " and " << id2);
+
+    cout << "item " << id1 << " and " << id2 << " are under the same branch of:" << endl;
+    for (auto it = path.begin(); it != path.end()-1; ++it)
+        cout << **it << " -> ";
+    cout << *(path.back()) << endl;
 }
 
 
@@ -269,10 +280,10 @@ try {
     // Test::test();
     // Test::test_trie();
     // Test::test_trie_common_root();
+    // return 0;
     
     handle_cmd();
 
-    // LOG(INFO) << argv[0] << " done!";
     return 0;    
 
 } catch (const std::exception &ex) {
