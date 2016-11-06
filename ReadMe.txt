@@ -25,6 +25,11 @@ Dependancy:
         sudo apt-get install libgoogle-glog-dev
     And make sure the "/usr/local/lib" path is in your $LD_LIBRARY_PATH environment variable.
 
+Compile: (On Ubuntu)
+    cd into project directory and run:
+        make
+    That will generate "demo.bin" executable.
+
 Usage:
     To start the program, run:
         ./demo.bin -data data/product.txt
