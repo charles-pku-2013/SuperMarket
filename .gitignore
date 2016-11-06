@@ -15,5 +15,6 @@
 !*.thrift
 !*.tcc
 !.gitignore
+!*.txt
 !Makefile
 !CMakeLists.txt

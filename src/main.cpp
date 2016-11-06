@@ -20,56 +20,6 @@ static ProductSet       g_ProductSet;
 static ProductTrie      g_ProductTrie;
 
 
-namespace Test {
-using namespace std;
-
-void test_query_by_type()
-{
-    auto& idx = g_ProductSet.get<1>();
-    auto i0 = idx.lower_bound("Spices");
-    auto i1 = idx.upper_bound("Spices");
-    for (; i0 != i1; ++i0)
-        cout << **i0 << endl;
-}
-
-void test_query_by_price()
-{
-    auto& idx = g_ProductSet.get<3>();
-    auto beg = idx.lower_bound(15);
-    auto end = idx.lower_bound(20);
-    for (; beg != end; ++beg)
-        cout << **beg << endl;
-}
-
-void test_trie()
-{
-    g_ProductTrie.traverse(cout);
-    cout << endl;
-}
-
-void test_trie_common_root()
-{
-    Product::IdType id1, id2;
-    cin >> id1 >> id2;
-    auto p1 = g_ProductTrie.getNodeById(id1);
-    auto p2 = g_ProductTrie.getNodeById(id2);
-    auto pComm = g_ProductTrie.commonRoot(p1, p2);
-    if (pComm)
-        cout << pComm->data() << endl;
-    else
-        cout << "No common root" << endl;
-}
-
-void test()
-{
-    auto& idx = g_ProductSet.get<2>();
-    for (auto it = idx.begin(); it != idx.end(); ++it)
-        cout << (*it)->name() << endl;
-}
-
-} // namespace Test
-
-
 static
 void load_data(const std::string &fname)
 {
@@ -88,9 +38,6 @@ void load_data(const std::string &fname)
         auto pProduct = std::make_shared<Product>(line);
         g_ProductSet.emplace(pProduct);
         g_ProductTrie.addProduct(pProduct);
-        // g_ProductTrie.traverse(cout);
-        // getchar();
-        // cout << *pProduct << endl;
     } // while
 
     // DLOG(INFO) << g_ProductSet.size();
@@ -132,6 +79,36 @@ void handle_query_name(const std::string &s1, const std::string &s2)
     };
 
     auto &idx = g_ProductSet.get<2>();
+    auto i0 = idx.lower_bound(s1, CmpStringPartial());
+    auto i1 = idx.upper_bound(s2, CmpStringPartial());
+
+    COND_RET_MSG(i0 == i1, "No item found!");
+
+    for (; i0 != i1 && i0 != idx.end(); ++i0)
+        cout << **i0 << endl;
+}
+
+
+static
+void handle_query_type(const std::string &s1, const std::string &s2)
+{
+    // TODO  name including spaces
+    
+    using namespace std;
+
+    // DLOG(INFO) << "handle_query_name " << s1 << " " << s2;
+
+    struct CmpStringPartial {
+        bool operator()(const std::string &s1, const std::string &s2) const
+        {
+            std::size_t len1 = s1.length();
+            std::size_t len2 = s2.length();
+            std::size_t len = len1 < len2 ? len1 : len2;
+            return strncmp(s1.c_str(), s2.c_str(), len) < 0;
+        }
+    };
+
+    auto &idx = g_ProductSet.get<1>();
     auto i0 = idx.lower_bound(s1, CmpStringPartial());
     auto i1 = idx.upper_bound(s2, CmpStringPartial());
 
@@ -185,6 +162,8 @@ void handle_query(std::stringstream &ss)
         handle_query_id(id1, id2);
     } else if ("name" == item) {
         handle_query_name(arg1, arg2);
+    } else if ("type" == item) {
+        handle_query_type(arg1, arg2);
     } else if ("price" == item) {
         float v1 = 0.0, v2 = 0.0;
         try {
@@ -257,6 +236,20 @@ void handle_cmd()
             handle_query(ss);
         } else if ("similar" == cmd) {
             handle_similar(ss);
+        } else if ("print_trie" == cmd) {
+            std::shared_ptr<std::ostream> pOut;
+            string fname;
+            ss >> fname;
+            if (ss.fail() || ss.bad() || fname.empty()) {
+                pOut.reset(&cout, [](std::ostream*){});
+            } else {
+                pOut.reset(new ofstream(fname, ios::out));
+                if (!(*pOut)) {
+                    cout << "Cannot open " << fname << " for writting!" << endl;
+                    continue;
+                } // pOut
+            } // if
+            g_ProductTrie.traverse(*pOut);
         } else if ("quit" == cmd) {
             return;
         } else {
@@ -291,4 +284,55 @@ try {
     return -1;
 }
 
+
+#if 0
+namespace Test {
+using namespace std;
+
+void test_query_by_type()
+{
+    auto& idx = g_ProductSet.get<1>();
+    auto i0 = idx.lower_bound("Spices");
+    auto i1 = idx.upper_bound("Spices");
+    for (; i0 != i1; ++i0)
+        cout << **i0 << endl;
+}
+
+void test_query_by_price()
+{
+    auto& idx = g_ProductSet.get<3>();
+    auto beg = idx.lower_bound(15);
+    auto end = idx.lower_bound(20);
+    for (; beg != end; ++beg)
+        cout << **beg << endl;
+}
+
+void test_trie()
+{
+    g_ProductTrie.traverse(cout);
+    cout << endl;
+}
+
+void test_trie_common_root()
+{
+    Product::IdType id1, id2;
+    cin >> id1 >> id2;
+    auto p1 = g_ProductTrie.getNodeById(id1);
+    auto p2 = g_ProductTrie.getNodeById(id2);
+    auto pComm = g_ProductTrie.commonRoot(p1, p2);
+    if (pComm)
+        cout << pComm->data() << endl;
+    else
+        cout << "No common root" << endl;
+}
+
+void test()
+{
+    auto& idx = g_ProductSet.get<2>();
+    for (auto it = idx.begin(); it != idx.end(); ++it)
+        cout << (*it)->name() << endl;
+}
+
+} // namespace Test
+#endif
 
