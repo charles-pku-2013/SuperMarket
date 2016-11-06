@@ -2,6 +2,7 @@
 #define _PRODUCT_TRIE_H_
 
 #include <iostream>
+#include <vector>
 #include "trie.hpp"
 #include "product.h"
 
@@ -26,8 +27,18 @@ struct ProductElem {
 
 class ProductTrie : public Trie<ProductElem> {
 public:
+    // struct NodeCmpByProductId {
+        // bool operator()(const Node::pointer &lhs, const Node::pointer &rhs) const
+        // { return lhs->data().pProduct->id() < rhs->data().pProduct->id(); }
+    // };
+
+public:
     std::pair<typename Node::pointer, bool>
     addProduct(const Product::pointer &p);
+    Node::pointer getNodeById(Product::IdType id);
+
+private:
+    std::vector<Node::pointer>     m_vecLeafNodes;
 };
 
 

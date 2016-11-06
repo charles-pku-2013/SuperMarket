@@ -28,7 +28,19 @@ ProductTrie::addProduct(const Product::pointer &p)
     } // while
 
     pCurNode->data().pProduct = p;
+    if (p->id() >= m_vecLeafNodes.size())
+        m_vecLeafNodes.resize(p->id() + 1);
+    m_vecLeafNodes[p->id()] = pCurNode;
 
     return ret;
 }
+
+
+ProductTrie::Node::pointer ProductTrie::getNodeById(Product::IdType id)
+{
+    if (id >= m_vecLeafNodes.size() || id <= 0)
+        return nullptr;
+    return m_vecLeafNodes[id];
+}
+
 

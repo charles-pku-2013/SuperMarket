@@ -210,6 +210,20 @@ public:
         return std::make_pair(curNode, true);
     }
 
+    typename Node::pointer commonRoot( typename Node::pointer lhs, 
+                                       typename Node::pointer rhs )
+    {
+        if (lhs == rhs) return lhs;
+        std::set<typename Node::pointer> setNodes;
+        for (; lhs->parent(); lhs = lhs->parent())
+            setNodes.insert(lhs);
+        for (; rhs->parent(); rhs = rhs->parent()) {
+            auto ret = setNodes.insert(rhs);
+            if (!ret.second) return rhs;
+        } // for
+        return nullptr;
+    }
+
     std::ostream& traverse( std::ostream &os )
     {
         root()->traverse(os, 0);

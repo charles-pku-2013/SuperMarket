@@ -9,23 +9,6 @@
 #include "product.h"
 
 
-#if 0
-typedef boost::multi_index::multi_index_container <
-    Product::pointer,
-    boost::multi_index::indexed_by <
-        // sort by Product::operator <      get<0>
-        boost::multi_index::ordered_unique< boost::multi_index::identity<Product> >,
-        // sort by less<string> on name     get<1>
-        boost::multi_index::ordered_non_unique< boost::multi_index::const_mem_fun<Product, const std::string&, &Product::name> >,
-        // sort by less<int> on type       get<2>
-        boost::multi_index::ordered_non_unique< boost::multi_index::const_mem_fun<Product, const std::string&, &Product::type> >,
-        // sort by less<int> on type       get<3>
-        boost::multi_index::ordered_non_unique< boost::multi_index::const_mem_fun<Product, float, &Product::price> >
-    > 
-> ProductSet;
-#endif
-
-
 #define MIDX boost::multi_index
 typedef MIDX::multi_index_container <
     Product::pointer,
@@ -41,6 +24,16 @@ typedef MIDX::multi_index_container <
     > 
 > ProductSet;
 #undef MIDX
+
+
+struct ProductCmpById {
+    // compare an ID and an Product
+    bool operator()(int x,const Product& p2) const
+    { return x < p2.id(); }
+    // compare an Product and an ID
+    bool operator()(const Product& p1,int x) const
+    { return p1.id() < x;}
+};
 
 
 #endif
