@@ -1,0 +1,15 @@
+product_mst_id	product_type	product_name	price	price_unit
+1	Diapers	"Huggies Little Snugglers Diapers, Size 1"	37.49	USD
+2	Diapers	"Huggies Snug & Dry Diapers, Size 2"	37.49	USD
+3	Diapers	"Huggies Snug & Dry Diapers, Size 3"	42.99	USD
+7	Diapers	"Kirkland Supreme Diapers, Size 1"	29.99	USD
+11	Diapers	"Kirkland Supreme Diapers, Size 5"	38.99	USD
+12	Diapers	"Kirkland Supreme Diapers, Size 6"	38.99	USD
+13	Formula	Enfamil Infant Formula Twin Pack	49.99	USD
+14	Formula	Kirkland Formula	17.99	USD
+15	Formula	Pedia-Sure (Vanilla)	36.99	USD
+16	Formula	Similac Advance Early Shield Formula Non-GMO	33.99	USD
+17	Formula	Similac Sensitive Infant Formula	33.99	USD
+18	Formula	Enfagrow Toddler Formula	27.49	USD
+19	Formula	Enfagrow Toddler Formula Next Step	23.99	USD
+20	Misc Baby	Desitin Creamy Ointment (2 pk)	9.39	USD

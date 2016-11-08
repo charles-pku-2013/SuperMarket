@@ -22,7 +22,7 @@ Product::Product(const std::string &record) : Product()
     if (!pField) 
         THROW_RUNTIME_ERROR("Cannot read id field!");
     m_nID = boost::lexical_cast<IdType>(pField);
-    if (m_nID < 0)
+    if (m_nID <= 0)
         THROW_RUNTIME_ERROR("Invalid ID value!");
     // read type
     pField = strtok_r(NULL, "\t", &saveEnd1);

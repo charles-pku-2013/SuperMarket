@@ -16,18 +16,16 @@ public:
     typedef typename std::shared_ptr<T>        elem_pointer;
 
     struct ElemPtrCmp {
-        constexpr bool operator() (const elem_pointer &lhs, const elem_pointer &rhs) const
+        bool operator() (const elem_pointer &lhs, const elem_pointer &rhs) const
         { return ElemCmp()(*lhs, *rhs); }
     };
-
-    typedef std::set<elem_pointer, ElemPtrCmp> ElemSet;
 
     struct Node : std::enable_shared_from_this<Node> {
         typedef typename std::shared_ptr<Node>     pointer;
         typedef typename std::weak_ptr<Node>       weak_pointer;
 
         struct PointerCmp {
-            constexpr bool operator() (const pointer &lhs, const pointer &rhs) const
+            bool operator() (const pointer &lhs, const pointer &rhs) const
             { return ElemCmp()(lhs->data(), rhs->data()); }
         };
 

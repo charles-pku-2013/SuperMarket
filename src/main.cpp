@@ -29,6 +29,8 @@ void load_data(const std::string &fname)
         THROW_RUNTIME_ERROR("You have to specify data file name by -data");
 
     ifstream ifs(fname, ios::in);
+    COND_RET_MSG(!ifs, "Cannot open " << fname << " for reading!");
+    
     string line;
 
     // skip the title
